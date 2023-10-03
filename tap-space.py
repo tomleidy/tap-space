@@ -26,10 +26,6 @@ message_row = row_track - 5
 regular = term.on_color_rgb(40, 40, 40) + term.color_rgb(255, 169, 0)
 reverse = term.color_rgb(40, 40, 40) + term.on_color_rgb(255, 169, 0)
 
-time_start = time.time()
-
-inp = "x"
-
 
 # score = (remaining_lives / elapsed_time) * some_constant_factor
 lives = STARTING_LIVES
@@ -37,7 +33,6 @@ lives = STARTING_LIVES
 
 def end_game(message):
     """End game and send end game message"""
-    global inp
     print(term.move_xy(0, row_track + 4) + term.normal + message)
     #inp = "q"
 
@@ -52,7 +47,6 @@ def prep_screen():
     print(reverse + term.move_y(row_track) + TRACK_CHARACTER)
     for x in range(0, term.width):
         print(term.move_y(row_track) + term.move_x(x) + TRACK_CHARACTER)
-
 
 def print_racer(x):
     """Display the racer character on the track"""
@@ -75,12 +69,12 @@ def clear_message():
 
 def run_racer():
     """Loop print_racer() for the row, bouncing the racer character from each edge of the terminal"""
-    global inp
     place = 0
     countdown = -1
     direction = 1
+    title_instance = titlebar.TitleBar(time.time(), lives)
     while True:
-        titlebar.print_gametime(time_start)
+        title_instance.refresh()
         print_racer(place)
         if direction > 0 and place == term.width or direction < 0 and place == 0:
             direction *= -1
