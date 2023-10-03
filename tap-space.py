@@ -4,7 +4,10 @@ from blessed import Terminal
 import titlebar
 term = Terminal()
 
-
+# Groupings to turn into classes: screen setup (track, goals, titlebar)
+# eventually will update all with screen.update() instead of 
+# individually calling indvidual refresh buttons?
+# 
 
 # this seems to be the fastest Windows can manage it. macOS can do it much faster.
 INPUT_TIMEOUT = 0.0156
