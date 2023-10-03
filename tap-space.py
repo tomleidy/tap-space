@@ -1,6 +1,10 @@
+"""The game itself."""
 import time
 from blessed import Terminal
 from terminal_colors import regular, reverse
+from terminal_strings import TRACK_CHARACTER, RACER_CHARACTER, GOAL_UPPER, GOAL_LOWER
+from terminal_strings import WIN_MESSAGE, LOSE_MESSAGE
+#from terminal_strings import TIMEOUT_MESSAGE
 import titlebar
 term = Terminal()
 
@@ -13,14 +17,7 @@ term = Terminal()
 # This is as fast as it can go and still be cross-platform to my current understanding.
 # Windows can only do 15.6ms timeouts. macOS can do it much faster.
 INPUT_TIMEOUT = 0.0156
-TRACK_CHARACTER = " "
-RACER_CHARACTER = "*"
-GOAL_UPPER = "=v="
-GOAL_LOWER = "=^="
 STARTING_LIVES = 10
-WIN_MESSAGE = "Goal!"
-LOSE_MESSAGE = "You missed, try again or press q to quit"
-TIMEOUT_MESSAGE = "Hey, are you there?"
 
 row_track = term.height // 2
 column_goal = term.width // 2
