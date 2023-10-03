@@ -1,15 +1,12 @@
 from blessed import Terminal
+import time
 
 term = Terminal()
-
 
 INPUT_TIMEOUT = 0.0156
 TRACK_CHARACTER = " "
 RACER_CHARACTER = "*"
-GOAL_UPPER = "=v="
-GOAL_LOWER = "=^="
-GOAL_LEFT = "|>|"  # this are going to take a multistep write
-GOAL_RIGHT = "|<|"
+
 STARTING_LIVES = 10
 WIN_MESSAGE = "Goal!"
 LOSE_MESSAGE = "You missed, try again or press q to quit"
@@ -27,14 +24,12 @@ row_track = term.height // 2
 column_goal = term.width // 2
 message_row = row_track - 5
 
-
 class Game:
     """The center of all this madness, where we setup our loop to run the game from"""
-
     message_row = row_track - 5
 
-    def __init__(self, time, starting_lives):
-        self.runtime = time
+    def __init__(self, starting_lives, difficulty):
+        self.runtime = time.time()
         self.inputkey = ""
         self.score = 0
         self.lives = starting_lives
