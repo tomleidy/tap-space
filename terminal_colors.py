@@ -1,3 +1,4 @@
+"""Terminal color settings"""
 from blessed import Terminal
 
 term = Terminal()
