@@ -1,5 +1,7 @@
 import time
 from blessed import Terminal
+
+import titlebar
 term = Terminal()
 
 
@@ -21,7 +23,7 @@ message_row = row_track - 5
 regular = term.on_color_rgb(40, 40, 40) + term.color_rgb(255, 169, 0)
 reverse = term.color_rgb(40, 40, 40) + term.on_color_rgb(255, 169, 0)
 
-time_start = time.time()
+time_start = int(time.time())
 
 inp = "x"
 
@@ -75,6 +77,7 @@ def run_racer():
     countdown = -1
     direction = 1
     while True:
+        titlebar.print_gametime(time_start)
         print_racer(place)
         if direction > 0 and place == term.width or direction < 0 and place == 0:
             direction *= -1
