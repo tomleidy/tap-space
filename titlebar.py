@@ -6,7 +6,7 @@ term = Terminal()
 
 def pad_to_two_digits(num):
     """Pad numbers. Max 99. Negative numbers converted to absolute value"""
-    if not isinstance(num, (int)):
+    if not isinstance(num, (int, float)):
         return "tt" # type test error
     if num > 99:
         return "99"
@@ -17,18 +17,15 @@ def pad_to_two_digits(num):
 
 def seconds_to_mmss(gametime):
     """Take time in seconds and convert it into time playing in mm:ss"""
-    if gametime > 3600:
-        # end_game(timeout_message)
-        pass
-    hours = pad_to_two_digits(gametime // 3600)
-    minutes = pad_to_two_digits(gametime % 3600 // 60)
+    
+    minutes = pad_to_two_digits(gametime // 60)
     seconds = pad_to_two_digits(gametime % 60)
     
-    return pad_to_two_digits(minutes) + ":" + pad_to_two_digits(seconds)
+    return minutes + ":" + seconds
 
 
 def print_gametime(start_time):
-    duration = int(time.time()) - start_time
+    duration = int(time.time()) - int(start_time)
     duration_string = seconds_to_mmss(duration) + " "
     start_duration_x = term.width - len(duration_string)
     print(term.move_xy(start_duration_x, 0) + duration_string)
