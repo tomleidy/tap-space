@@ -1,18 +1,18 @@
-# Want the score on the top left, the time on the top right
+from blessed import Terminal
+import time
+
+term = Terminal()
 
 
-def padding_two_digits(num):
-    """Take a single digit number and turn it into a two digit number. Max 99. Negative numbers converted to absolute value"""
-    if num < 0:
-        num = abs(num)
-    if num < 10:
-        return "0" + str(abs(num))
-    elif num > 99:
+def pad_to_two_digits(num):
+    """Pad numbers. Max 99. Negative numbers converted to absolute value"""
+    if not isinstance(num, (int)):
+        return "tt" # type test error
+    if num > 99:
         return "99"
-    elif num >= 10 and num <= 99:
-        return str(num)
-    else:
-        return "dd"
+    if num < 0:
+        return "nn" # negative number, why?
+    return f"{num:02}"
 
 
 def seconds_to_mmss(gametime):
@@ -20,13 +20,18 @@ def seconds_to_mmss(gametime):
     if gametime > 3600:
         # end_game(timeout_message)
         pass
-    minutes = gametime % 60
-    seconds = gametime - (minutes * 60)
-    return padding_two_digits(minutes) + ":" + padding_two_digits(seconds)
+    hours = pad_to_two_digits(gametime // 3600)
+    minutes = pad_to_two_digits(gametime % 3600 // 60)
+    seconds = pad_to_two_digits(gametime % 60)
+    
+    return pad_to_two_digits(minutes) + ":" + pad_to_two_digits(seconds)
 
 
 def print_gametime(start_time):
-    pass
+    duration = int(time.time()) - start_time
+    duration_string = seconds_to_mmss(duration) + " "
+    start_duration_x = term.width - len(duration_string)
+    print(term.move_xy(start_duration_x, 0) + duration_string)
 
 
 def print_lives_remaining(lives):
@@ -35,8 +40,9 @@ def print_lives_remaining(lives):
 
 def print_header(lives, start_time, score):
     """Print header row, including ANSI, etc."""
-    remaining_lives = "Lives: " + lives
-
+    print(term.move_xy(0,0) + reversed)
+    #print(term.move(xy(1,0) + f"Score: {score}"))
+    
 
 # Score is going to be calculated per round, and added to a cumulative game score.
 #
@@ -51,7 +57,6 @@ def score_ratio():
 
 
 def lives_decrement(lives):
-    """Don't have a class or anything to do this with. Refactor someday."""
     pass
 
 
