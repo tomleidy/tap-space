@@ -55,9 +55,10 @@ class Game:
 
     def prep_track_vertical(self, column_track, row_goal):
         """text goes here"""
-        # will probably need to print ANSI characters to protect the color on either side of the track
-        # just remembered that the line seems to get affected once a character is printed
-        # which will also be a thing I need to do in the diagonal. Exciting.
+        # will probably need to print ANSI characters to protect the color on either 
+        # side of the track. just remembered that the line seems to get affected 
+        # once a character is printed which will also be a thing I need to do
+        # in the diagonal. Exciting.
         print(term.move_xy(row_goal - 1, row_goal - 1) + GOAL_LEFT)
         print(term.move_xy(row_goal - 1, row_goal + 1) + GOAL_RIGHT)
         print()
