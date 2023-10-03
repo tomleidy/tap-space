@@ -1,6 +1,6 @@
 import time
 from blessed import Terminal
-
+from terminal_colors import regular, reverse
 import titlebar
 term = Terminal()
 
@@ -23,8 +23,6 @@ TIMEOUT_MESSAGE = "Hey, are you there?"
 row_track = term.height // 2
 column_goal = term.width // 2
 message_row = row_track - 5
-regular = term.on_color_rgb(40, 40, 40) + term.color_rgb(255, 169, 0)
-reverse = term.color_rgb(40, 40, 40) + term.on_color_rgb(255, 169, 0)
 
 
 # score = (remaining_lives / elapsed_time) * some_constant_factor

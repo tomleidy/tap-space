@@ -1,6 +1,6 @@
-from blessed import Terminal
 import time
-
+from blessed import Terminal
+from terminal_colors import regular, reverse
 term = Terminal()
 
 INPUT_TIMEOUT = 0.0156
@@ -12,8 +12,6 @@ WIN_MESSAGE = "Goal!"
 LOSE_MESSAGE = "You missed, try again or press q to quit"
 TIMEOUT_MESSAGE = "Hey, are you there?"
 
-regular = term.on_color_rgb(40, 40, 40) + term.color_rgb(255, 169, 0)
-reverse = term.color_rgb(40, 40, 40) + term.on_color_rgb(255, 169, 0)
 column_goal = term.width // 2
 row_track = term.height // 2
 
