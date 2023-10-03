@@ -39,7 +39,7 @@ def end_game(message):
     """End game and send end game message"""
     global inp
     print(term.move_xy(0, row_track + 4) + term.normal + message)
-    inp = "q"
+    #inp = "q"
 
 
 def prep_screen():
@@ -90,23 +90,24 @@ def run_racer():
         if countdown >= 0:
             countdown -= 1
         with term.cbreak(), term.hidden_cursor():
-            inp = term.inkey(INPUT_TIMEOUT)
+            cur_inp = term.inkey(INPUT_TIMEOUT).lower()
 
-            if inp.lower() == "q":
-                break
-            elif inp == " ":
+            if cur_inp == "q":
+                return "q"
+            elif cur_inp == " ":
                 if place == column_goal:
                     space_message(WIN_MESSAGE)
                     countdown = 50
                 else:
                     space_message(LOSE_MESSAGE)
                     countdown = 50
+            return cur_inp
 
 
 prep_screen()
-
-while inp.lower() != "q":
-    run_racer()
+inp = ""
+while inp != "q":
+    inp = run_racer()
 
 # do we need to reset the terminal to normal? we do.
 print(term.normal)
