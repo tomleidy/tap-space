@@ -53,7 +53,7 @@ class Game:
     def space_miss(self):
         """Player hit spacebar, it was a miss"""
         pass
-    
+
     def run_racer(self):
         """Loop print_racer() for the row: bounce racer character on edges of terminal"""
         place = 0
