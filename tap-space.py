@@ -38,16 +38,17 @@ class Game:
         print(term.move_xy(0, row_track) + TRACK_CHARACTER*term.width)
 
     def run_game(self):
+        """Runs the sentinel pattern loop"""
         while self.input_key != "q":
             self.run_racer()
 
-    def print_racer(self, x):
+    def print_racer(self, position):
         """Display the racer character on the track"""
-        if x > 0 and x < term.width:
-            print(term.move_xy(x - 1, row_track) + TRACK_CHARACTER)
-        print(term.move_xy(x, row_track) + regular + RACER_CHARACTER + reverse)
-        if x < term.width and x > 0:
-            print(term.move_xy(x + 1, row_track) + TRACK_CHARACTER)
+        if position > 0 and position < term.width:
+            print(term.move_xy(position - 1, row_track) + TRACK_CHARACTER)
+        print(term.move_xy(position, row_track) + regular + RACER_CHARACTER + reverse)
+        if position < term.width and position > 0:
+            print(term.move_xy(position + 1, row_track) + TRACK_CHARACTER)
 
     def space_miss(self):
         """Player hit spacebar, it was a miss"""
