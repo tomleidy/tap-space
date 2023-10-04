@@ -1,7 +1,7 @@
 """TitleBar class module for initiating, displaying, and updating titlebar."""
 import time
 from blessed import Terminal
-from terminal_colors import reverse
+from constants.terminal_colors import reverse
 
 
 term = Terminal()
