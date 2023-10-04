@@ -29,6 +29,7 @@ class Racer:
                     return "goal"
                 else:
                     return "miss"
+            return ""
 
     def print_racer(self, position):
         """Display the racer character on the track"""
