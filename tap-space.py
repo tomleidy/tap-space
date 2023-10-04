@@ -4,6 +4,9 @@ from blessed import Terminal
 from constants.terminal_colors import regular, reverse
 from constants.terminal_strings import TRACK_CHARACTER, RACER_CHARACTER, GOAL_UPPER, GOAL_LOWER
 from constants.terminal_strings import WIN_MESSAGE, LOSE_MESSAGE
+from constants.game import INPUT_TIMEOUT, STARTING_LIVES
+from screen.messages import message_send, message_row_clear
+from screen.locations import row_track, column_goal
 #from constants.terminal_strings import TIMEOUT_MESSAGE
 import titlebar
 term = Terminal()
@@ -13,33 +16,16 @@ term = Terminal()
 # individually calling indvidual refresh buttons?
 # 
 
-# This is the variable that controls the speed of the game. Higher? slower game.
-# This is as fast as it can go and still be cross-platform to my current understanding.
-# Windows can only do 15.6ms timeouts. macOS can do it much faster.
-INPUT_TIMEOUT = 0.0156
-STARTING_LIVES = 10
-
-row_track = term.height // 2
-column_goal = term.width // 2
-message_row = row_track - 5
-
-
 # score = (remaining_lives / elapsed_time) * some_constant_factor
-lives = STARTING_LIVES
 
 class Game:
     """Primary class for running game instances"""
-    def __init__(self, starting_lives):
+    def __init__(self, starting_lives=STARTING_LIVES):
         self.lives = starting_lives
         self.score = 0
         self.difficulty = 0 # constant speed, (30ms input timeout?)
         self.input_key = ""
         self.prep_screen()
-
-    def end_game(self, message):
-        """End game and send end game message"""
-        print(term.move_xy(0, row_track + 4) + term.normal + message)
-        self.input_key = "q"
 
     def prep_screen(self):
         """Prepare terminal for playing: clear, set goals, set track"""
@@ -64,20 +50,16 @@ class Game:
         if x < term.width and x > 0:
             print(term.move_xy(x + 1, row_track) + TRACK_CHARACTER)
 
-    def space_message(self, message):
-        """Print message to message row"""
-        print(term.move_y(message_row) + regular + term.center(message) + reverse)
-
-    def clear_message(self):
-        """Clear message from message row"""
-        print(term.move_y(message_row) + term.normal + term.center("") + reverse)
-
+    def space_miss(self):
+        """Player hit spacebar, it was a miss"""
+        pass
+    
     def run_racer(self):
         """Loop print_racer() for the row: bounce racer character on edges of terminal"""
         place = 0
         countdown = -1
         direction = 1
-        title_instance = titlebar.TitleBar(time.time(), lives)
+        title_instance = titlebar.TitleBar(time.time(), self.lives)
         while True:
             title_instance.refresh()
             self.print_racer(place)
@@ -85,7 +67,7 @@ class Game:
                 direction *= -1
             place += direction
             if countdown == 0:
-                self.clear_message()
+                message_row_clear()
             if countdown >= 0:
                 countdown -= 1
             with term.cbreak(), term.hidden_cursor():
@@ -95,10 +77,10 @@ class Game:
                     return "q"
                 elif self.input_key == " ":
                     if place == column_goal:
-                        self.space_message(WIN_MESSAGE)
+                        message_send(WIN_MESSAGE)
                         countdown = 50
                     else:
-                        self.space_message(LOSE_MESSAGE)
+                        message_send(LOSE_MESSAGE)
                         countdown = 50
 
 game = Game(9)
