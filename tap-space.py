@@ -1,10 +1,10 @@
 """The game itself."""
 import time
 from blessed import Terminal
-from terminal_colors import regular, reverse
-from terminal_strings import TRACK_CHARACTER, RACER_CHARACTER, GOAL_UPPER, GOAL_LOWER
-from terminal_strings import WIN_MESSAGE, LOSE_MESSAGE
-#from terminal_strings import TIMEOUT_MESSAGE
+from constants.terminal_colors import regular, reverse
+from constants.terminal_strings import TRACK_CHARACTER, RACER_CHARACTER, GOAL_UPPER, GOAL_LOWER
+from constants.terminal_strings import WIN_MESSAGE, LOSE_MESSAGE
+#from constants.terminal_strings import TIMEOUT_MESSAGE
 import titlebar
 term = Terminal()
 
