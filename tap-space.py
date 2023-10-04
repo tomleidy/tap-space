@@ -1,10 +1,11 @@
 """The game itself."""
 import time
 from constants.terminal_colors import regular, reverse
-from constants.terminal_strings import TRACK_CHARACTER, RACER_CHARACTER, GOAL_UPPER, GOAL_LOWER
+from constants.terminal_strings import TRACK_CHARACTER, RACER_CHARACTER
 from constants.terminal_strings import WIN_MESSAGE, LOSE_MESSAGE
 from constants.game import INPUT_TIMEOUT, STARTING_LIVES
 #from screen.messages import message_send, message_row_clear, term
+from screen.track import Track
 from screen.messages import Message
 from screen.locations import row_track, column_goal, term
 #from constants.terminal_strings import TIMEOUT_MESSAGE
@@ -25,20 +26,12 @@ class Game:
         self.score = 0
         self.difficulty = 0 # constant speed, (30ms input timeout?)
         self.input_key = ""
-        self.prep_screen()
+        self.track = Track()
         self.countdown = 0
         self.message = Message()
         self.titlebar = titlebar.TitleBar(time.time(), self.lives)
 
-    def prep_screen(self):
-        """Prepare terminal for playing: clear, set goals, set track"""
-        print(term.home + term.clear)
-        print(term.move_y(row_track))
-        print(regular)
-        print(term.move_xy(column_goal - 1, row_track - 1) + GOAL_UPPER)
-        print(term.move_xy(column_goal - 1, row_track + 1) + GOAL_LOWER)
-        print(reverse + term.move_y(row_track) + TRACK_CHARACTER)
-        print(term.move_xy(0, row_track) + TRACK_CHARACTER*term.width)
+    
 
     def run_game(self):
         """Runs the sentinel pattern loop"""
