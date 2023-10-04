@@ -1,15 +1,15 @@
 """The game itself."""
 import time
-from blessed import Terminal
 from constants.terminal_colors import regular, reverse
 from constants.terminal_strings import TRACK_CHARACTER, RACER_CHARACTER, GOAL_UPPER, GOAL_LOWER
 from constants.terminal_strings import WIN_MESSAGE, LOSE_MESSAGE
 from constants.game import INPUT_TIMEOUT, STARTING_LIVES
-from screen.messages import message_send, message_row_clear
-from screen.locations import row_track, column_goal
+#from screen.messages import message_send, message_row_clear, term
+from screen.messages import Message
+from screen.locations import row_track, column_goal, term
 #from constants.terminal_strings import TIMEOUT_MESSAGE
 import titlebar
-term = Terminal()
+#term = Terminal()
 
 # Groupings to turn into classes: screen setup (track, goals, titlebar)
 # eventually will update all with screen.update() instead of 
@@ -26,6 +26,9 @@ class Game:
         self.difficulty = 0 # constant speed, (30ms input timeout?)
         self.input_key = ""
         self.prep_screen()
+        self.countdown = 0
+        self.message = Message()
+        self.titlebar = titlebar.TitleBar(time.time(), self.lives)
 
     def prep_screen(self):
         """Prepare terminal for playing: clear, set goals, set track"""
@@ -52,24 +55,19 @@ class Game:
 
     def space_miss(self):
         """Player hit spacebar, it was a miss"""
-        pass
+        self.message.send(WIN_MESSAGE)
 
     def run_racer(self):
         """Loop print_racer() for the row: bounce racer character on edges of terminal"""
         place = 0
-        countdown = -1
         direction = 1
-        title_instance = titlebar.TitleBar(time.time(), self.lives)
         while True:
-            title_instance.refresh()
+            self.titlebar.refresh()
+            self.message.refresh()
             self.print_racer(place)
             if direction > 0 and place == term.width or direction < 0 and place == 0:
                 direction *= -1
             place += direction
-            if countdown == 0:
-                message_row_clear()
-            if countdown >= 0:
-                countdown -= 1
             with term.cbreak(), term.hidden_cursor():
                 self.input_key = term.inkey(INPUT_TIMEOUT).lower()
 
@@ -77,11 +75,9 @@ class Game:
                     return "q"
                 elif self.input_key == " ":
                     if place == column_goal:
-                        message_send(WIN_MESSAGE)
-                        countdown = 50
+                        self.message.send(WIN_MESSAGE)
                     else:
-                        message_send(LOSE_MESSAGE)
-                        countdown = 50
+                        self.message.send(LOSE_MESSAGE)
 
 game = Game(9)
 game.run_game()
