@@ -1,21 +1,14 @@
 """The game itself."""
 import time
-from constants.terminal_colors import regular, reverse
-from constants.terminal_strings import TRACK_CHARACTER, RACER_CHARACTER
 from constants.terminal_strings import WIN_MESSAGE, LOSE_MESSAGE
-from constants.game import INPUT_TIMEOUT, STARTING_LIVES
-#from screen.messages import message_send, message_row_clear, term
+from constants.game import STARTING_LIVES
 from screen.track import Track
 from screen.messages import Message
-from screen.locations import row_track, column_goal, term
-#from constants.terminal_strings import TIMEOUT_MESSAGE
-import titlebar
-#term = Terminal()
+from screen.racer import Racer
+from screen.locations import term
+from screen.titlebar import TitleBar
 
-# Groupings to turn into classes: screen setup (track, goals, titlebar)
 # eventually will update all with screen.update() instead of 
-# individually calling indvidual refresh buttons?
-# 
 
 # score = (remaining_lives / elapsed_time) * some_constant_factor
 
@@ -25,53 +18,28 @@ class Game:
         self.lives = starting_lives
         self.score = 0
         self.difficulty = 0 # constant speed, (30ms input timeout?)
-        self.input_key = ""
+        self.racer_feedback = ""
         self.track = Track()
-        self.countdown = 0
         self.message = Message()
-        self.titlebar = titlebar.TitleBar(time.time(), self.lives)
-
-    
+        self.racer = Racer()
+        self.titlebar = TitleBar(time.time(), self.lives)
 
     def run_game(self):
         """Runs the sentinel pattern loop"""
-        while self.input_key != "q":
-            self.run_racer()
-
-    def print_racer(self, position):
-        """Display the racer character on the track"""
-        if position > 0 and position < term.width:
-            print(term.move_xy(position - 1, row_track) + TRACK_CHARACTER)
-        print(term.move_xy(position, row_track) + regular + RACER_CHARACTER + reverse)
-        if position < term.width and position > 0:
-            print(term.move_xy(position + 1, row_track) + TRACK_CHARACTER)
+        while self.racer_feedback != "q":
+            self.titlebar.refresh()
+            self.message.refresh()
+            self.racer_feedback = self.racer.refresh()
+            if self.racer_feedback == "goal":
+                self.message.send(WIN_MESSAGE)
+            elif self.racer_feedback == "miss":
+                self.message.send(LOSE_MESSAGE)
 
     def space_miss(self):
         """Player hit spacebar, it was a miss"""
         self.message.send(WIN_MESSAGE)
 
-    def run_racer(self):
-        """Loop print_racer() for the row: bounce racer character on edges of terminal"""
-        place = 0
-        direction = 1
-        while True:
-            self.titlebar.refresh()
-            self.message.refresh()
-            self.print_racer(place)
-            if direction > 0 and place == term.width or direction < 0 and place == 0:
-                direction *= -1
-            place += direction
-            with term.cbreak(), term.hidden_cursor():
-                self.input_key = term.inkey(INPUT_TIMEOUT).lower()
-
-                if self.input_key == "q":
-                    return "q"
-                elif self.input_key == " ":
-                    if place == column_goal:
-                        self.message.send(WIN_MESSAGE)
-                    else:
-                        self.message.send(LOSE_MESSAGE)
-
+    
 game = Game(9)
 game.run_game()
 
