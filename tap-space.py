@@ -27,78 +27,82 @@ message_row = row_track - 5
 # score = (remaining_lives / elapsed_time) * some_constant_factor
 lives = STARTING_LIVES
 
+class Game:
+    """Primary class for running game instances"""
+    def __init__(self, starting_lives):
+        self.lives = starting_lives
+        self.score = 0
+        self.difficulty = 0 # constant speed, (30ms input timeout?)
+        self.input_key = ""
+        self.prep_screen()
 
-def end_game(message):
-    """End game and send end game message"""
-    print(term.move_xy(0, row_track + 4) + term.normal + message)
-    #inp = "q"
+    def end_game(self, message):
+        """End game and send end game message"""
+        print(term.move_xy(0, row_track + 4) + term.normal + message)
+        self.input_key = "q"
 
+    def prep_screen(self):
+        """Prepare terminal for playing: clear, set goals, set track"""
+        print(term.home + term.clear)
+        print(term.move_y(row_track))
+        print(regular)
+        print(term.move_xy(column_goal - 1, row_track - 1) + GOAL_UPPER)
+        print(term.move_xy(column_goal - 1, row_track + 1) + GOAL_LOWER)
+        print(reverse + term.move_y(row_track) + TRACK_CHARACTER)
+        for x in range(0, term.width):
+            print(term.move_y(row_track) + term.move_x(x) + TRACK_CHARACTER)
 
-def prep_screen():
-    """Prepare terminal for playing: clear, set goals, set track"""
-    print(term.home + term.clear)
-    print(term.move_y(row_track))
-    print(regular)
-    print(term.move_xy(column_goal - 1, row_track - 1) + GOAL_UPPER)
-    print(term.move_xy(column_goal - 1, row_track + 1) + GOAL_LOWER)
-    print(reverse + term.move_y(row_track) + TRACK_CHARACTER)
-    for x in range(0, term.width):
-        print(term.move_y(row_track) + term.move_x(x) + TRACK_CHARACTER)
+    def run_game(self):
+        while self.input_key != "q":
+            self.run_racer()
 
-def print_racer(x):
-    """Display the racer character on the track"""
-    if x > 0 and x < term.width:
-        print(term.move_xy(x - 1, row_track) + TRACK_CHARACTER)
-    print(term.move_xy(x, row_track) + regular + RACER_CHARACTER + reverse)
-    if x < term.width and x > 0:
-        print(term.move_xy(x + 1, row_track) + TRACK_CHARACTER)
+    def print_racer(self, x):
+        """Display the racer character on the track"""
+        if x > 0 and x < term.width:
+            print(term.move_xy(x - 1, row_track) + TRACK_CHARACTER)
+        print(term.move_xy(x, row_track) + regular + RACER_CHARACTER + reverse)
+        if x < term.width and x > 0:
+            print(term.move_xy(x + 1, row_track) + TRACK_CHARACTER)
 
+    def space_message(self, message):
+        """Print message to message row"""
+        print(term.move_y(message_row) + regular + term.center(message) + reverse)
 
-def space_message(message):
-    """Print message to message row"""
-    print(term.move_y(message_row) + regular + term.center(message) + reverse)
+    def clear_message(self):
+        """Clear message from message row"""
+        print(term.move_y(message_row) + term.normal + term.center("") + reverse)
 
+    def run_racer(self):
+        """Loop print_racer() for the row: bounce racer character on edges of terminal"""
+        place = 0
+        countdown = -1
+        direction = 1
+        title_instance = titlebar.TitleBar(time.time(), lives)
+        while True:
+            title_instance.refresh()
+            self.print_racer(place)
+            if direction > 0 and place == term.width or direction < 0 and place == 0:
+                direction *= -1
+            place += direction
+            if countdown == 0:
+                self.clear_message()
+            if countdown >= 0:
+                countdown -= 1
+            with term.cbreak(), term.hidden_cursor():
+                self.input_key = term.inkey(INPUT_TIMEOUT).lower()
 
-def clear_message():
-    """Clear message from message row"""
-    print(term.move_y(message_row) + term.normal + term.center("") + reverse)
+                if self.input_key == "q":
+                    return "q"
+                elif self.input_key == " ":
+                    if place == column_goal:
+                        self.space_message(WIN_MESSAGE)
+                        countdown = 50
+                    else:
+                        self.space_message(LOSE_MESSAGE)
+                        countdown = 50
 
-
-def run_racer():
-    """Loop print_racer() for the row, bouncing the racer character from each edge of the terminal"""
-    place = 0
-    countdown = -1
-    direction = 1
-    title_instance = titlebar.TitleBar(time.time(), lives)
-    while True:
-        title_instance.refresh()
-        print_racer(place)
-        if direction > 0 and place == term.width or direction < 0 and place == 0:
-            direction *= -1
-        place += direction
-        if countdown == 0:
-            clear_message()
-        if countdown >= 0:
-            countdown -= 1
-        with term.cbreak(), term.hidden_cursor():
-            cur_inp = term.inkey(INPUT_TIMEOUT).lower()
-
-            if cur_inp == "q":
-                return "q"
-            elif cur_inp == " ":
-                if place == column_goal:
-                    space_message(WIN_MESSAGE)
-                    countdown = 50
-                else:
-                    space_message(LOSE_MESSAGE)
-                    countdown = 50
-            return cur_inp
-
-
-prep_screen()
-inp = ""
-while inp != "q":
-    inp = run_racer()
+game = Game(9)
+game.run_game()
 
 # do we need to reset the terminal to normal? we do.
 print(term.normal)
