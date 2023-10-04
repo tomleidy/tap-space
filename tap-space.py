@@ -35,8 +35,7 @@ class Game:
         print(term.move_xy(column_goal - 1, row_track - 1) + GOAL_UPPER)
         print(term.move_xy(column_goal - 1, row_track + 1) + GOAL_LOWER)
         print(reverse + term.move_y(row_track) + TRACK_CHARACTER)
-        for x in range(0, term.width):
-            print(term.move_y(row_track) + term.move_x(x) + TRACK_CHARACTER)
+        print(term.move_xy(0, row_track) + TRACK_CHARACTER*term.width)
 
     def run_game(self):
         while self.input_key != "q":
