@@ -8,7 +8,7 @@ from screen.racer import Racer
 from screen.locations import term
 from screen.titlebar import TitleBar
 
-# eventually will update all with screen.update() instead of 
+# eventually will update all with screen.update() instead of track, message, racer updates
 
 # score = (remaining_lives / elapsed_time) * some_constant_factor
 
