@@ -21,7 +21,8 @@ class Game:
         self.racer_feedback = ""
         self.track = Track()
         self.message = Message()
-        self.racer = Racer()
+        self.track_positions = self.track.get_track()
+        self.racer = Racer(self.track_positions)
         self.titlebar = TitleBar(time.time(), self.lives)
 
     def run_game(self):
