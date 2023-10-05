@@ -15,14 +15,16 @@ from screen.titlebar import TitleBar
 class Game:
     """Primary class for running game instances"""
     def __init__(self, starting_lives=STARTING_LIVES):
+        shape = "hyphen"
         self.lives = starting_lives
-        self.score = 0
+        self.goals = 0
+        self.misses = 0
         self.difficulty = 0 # constant speed, (30ms input timeout?)
         self.racer_feedback = ""
-        self.track = Track()
+        self.track = Track(shape)
         self.message = Message()
         self.track_positions = self.track.get_track()
-        self.racer = Racer(self.track_positions)
+        self.racer = Racer(self.track_positions, shape)
         self.titlebar = TitleBar(time.time(), self.lives)
 
     def run_game(self):
@@ -32,8 +34,10 @@ class Game:
             self.message.refresh()
             self.racer_feedback = self.racer.refresh()
             if self.racer_feedback == "goal":
+                self.goals += 1
                 self.message.send(WIN_MESSAGE)
             elif self.racer_feedback == "miss":
+                self.misses +=1
                 self.message.send(LOSE_MESSAGE)
 
     def space_miss(self):
@@ -45,4 +49,5 @@ game = Game(9)
 game.run_game()
 
 # do we need to reset the terminal to normal? we do.
+#print(term.normal + term.clear)
 print(term.normal)
