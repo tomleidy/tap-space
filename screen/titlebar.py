@@ -10,10 +10,11 @@ MAX_LEVEL_SCORE = 70000
 class TitleBar:
     """Class for titlebar display. Primary external method is refresh() to have it 
     calculate/update to current values."""
-    def __init__(self, start_time, lives):
+    def __init__(self, start_time, retries):
         self.start_time = start_time
-        self.game_score = 0
-        self.lives = lives
+        self.goals = 0
+        self.misses = 0
+        self.retries = retries
         self.potential_score = MAX_LEVEL_SCORE
         self.level_name = "level_name_placeholder"
         print(term.move_xy(0,0) + reverse + term.center("tap space"))
@@ -41,20 +42,28 @@ class TitleBar:
     def refresh(self):
         """Run methods in class to update titlebar with every iteration"""
         self.print_gametime()
-        
+        self.print_current_score()
 
-    def print_lives_remaining(self):
-        """Display lives remaining in titlebar"""
+    def print_retries_remaining(self):
+        """Display retries remaining in titlebar"""
 
     def print_current_score(self):
         "Display current game score in title bar"
+        goals = f"Goals: {self.pad_to_two_digits(self.goals)}"
+        misses = f"Misses: {self.pad_to_two_digits(self.misses)}"
+        print(f"{term.move_xy(1,0)}{goals} {misses}")
 
-    def set_game_score(self, score):
+    def add_goal(self):
         """Update class with game score"""
-        self.game_score = score
+        self.goals += 1
+        
+    def add_miss(self):
+        """Update class with misses count"""
+        self.misses += 1
 
-    def set_lives(self, lives):
-        """Update class with player lives left"""
+    def decrease_retries(self):
+        """Update class with player retries left"""
+        self.retries -= 1
 
     def highscores_load(self):
         """Load highscores from file on start"""

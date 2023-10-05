@@ -34,10 +34,10 @@ class Game:
             self.message.refresh()
             self.racer_feedback = self.racer.refresh()
             if self.racer_feedback == "goal":
-                self.goals += 1
+                self.titlebar.add_goal()
                 self.message.send(WIN_MESSAGE)
             elif self.racer_feedback == "miss":
-                self.misses +=1
+                self.titlebar.add_miss()
                 self.message.send(LOSE_MESSAGE)
 
     def space_miss(self):
