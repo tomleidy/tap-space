@@ -41,6 +41,10 @@ class Racer:
         if self.does_pos_exist(self.place_cur):
             self.prev_xy = self.get_pos_dict(self.place_cur)
         self.place_cur += self.direction
+        if self.does_pos_exist(self.place_cur+self.direction):
+            self.next_xy = self.get_pos_dict(self.place_cur+self.direction)
+        else:
+            self.next_xy = self.get_pos_dict(self.place_cur-self.direction)
 
     def refresh(self):
         """Loop print_racer() for the row: bounce racer character on edges of terminal"""
@@ -52,15 +56,16 @@ class Racer:
         return self.get_term_input()
 
     def does_pos_exist(self, position):
-        if position < 0 or position > len(self.track_positions):
+        """Determine if position is available in track_positions dictionary"""
+        if position < 0 or position >= len(self.track_positions):
             return False
         return True
 
     def get_pos_dict(self, position):
         """Return xy coordinate object for a position"""
-        if position >= len(self.track_positions):
-            return {"x": -1, "y": -1}
-        return self.track_positions[position]
+        if self.does_pos_exist(position):
+            return self.track_positions[position]
+        return {"x": -1, "y": -1}
 
     def print_racer(self, position):
         """Display the racer character on the track"""
