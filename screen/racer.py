@@ -9,6 +9,7 @@ DEBUG = True
 
 
 class Racer:
+    """Display the racer character"""
     def __init__(self, track_positions, shape="pipe"):
         self.input_key = ""
         self.place_cur = min(track_positions.keys())
