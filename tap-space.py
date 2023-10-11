@@ -32,8 +32,11 @@ if platform.system() == 'Windows' and os.getenv('MSYSTEM') == 'MINGW64':
     # I haven't figured out how to get this to work properly in Git Bash terminals.
     # They don't handle the ANSI as intended.
 
+
 class Game:
     """Primary class for running game instances"""
+
+    def __init__(self, starting_lives=STARTING_LIVES, shape="hyphen"):
         self.shape = shape
         self.lives = starting_lives
         self.goals = 0
@@ -68,5 +71,5 @@ game = Game(9, args.shape)
 game.run_game()
 
 # do we need to reset the terminal to normal? we do.
-#print(term.normal + term.clear)
+# print(term.normal + term.clear)
 print(term.normal_cursor() + term.normal)
