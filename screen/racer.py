@@ -1,7 +1,7 @@
 from constants.terminal_colors import regular, reverse
 from constants.terminal_strings import TRACK_CHARACTER, RACER_CHARACTER
 from constants.game import INPUT_TIMEOUT
-from screen.locations import column_goal, term #, row_track
+from screen.locations import column_goal, term  # , row_track
 
 from screen.messages import Message
 
@@ -10,6 +10,7 @@ DEBUG = True
 
 class Racer:
     """Display the racer character"""
+
     def __init__(self, track_positions, shape="pipe"):
         self.input_key = ""
         self.place_cur = min(track_positions.keys())
@@ -95,7 +96,6 @@ class Racer:
         if position not in self.track_positions:
             return False
         return True
-        
 
     def get_pos_dict(self, position):
         """Return xy coordinate object for a position"""
