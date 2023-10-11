@@ -1,5 +1,8 @@
 """The game itself."""
 import time
+import os
+import platform
+import sys
 from constants.terminal_strings import WIN_MESSAGE, LOSE_MESSAGE
 from constants.game import STARTING_LIVES
 from screen.track import Track
@@ -11,6 +14,12 @@ from screen.titlebar import TitleBar
 # eventually will update all with screen.update() instead of track, message, racer updates
 
 # score = (remaining_lives / elapsed_time) * some_constant_factor
+
+if platform.system() == 'Windows' and os.getenv('MSYSTEM') == 'MINGW64':
+    print("Please run from Windows PowerShell, macOS, Linux, or WSL")
+    sys.exit()
+    # I haven't figured out how to get this to work properly in Git Bash terminals.
+    # They don't handle the ANSI as intended.
 
 class Game:
     """Primary class for running game instances"""
@@ -44,10 +53,10 @@ class Game:
         """Player hit spacebar, it was a miss"""
         self.message.send(WIN_MESSAGE)
 
-    
+
 game = Game(9)
 game.run_game()
 
 # do we need to reset the terminal to normal? we do.
 #print(term.normal + term.clear)
-print(term.normal)
+print(term.normal_cursor() + term.normal)
