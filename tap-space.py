@@ -38,7 +38,7 @@ class Game:
         self.lives = starting_lives
         self.goals = 0
         self.misses = 0
-        self.difficulty = 0 # constant speed, (30ms input timeout?)
+        self.difficulty = 0  # constant speed, (30ms input timeout?)
         self.racer_feedback = ""
         self.track = Track(self.shape)
         self.message = Message()
