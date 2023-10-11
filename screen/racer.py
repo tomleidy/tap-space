@@ -39,7 +39,7 @@ class Racer:
         """Determine if position is against the end of the track"""
         return not self.does_pos_exist(self.place_cur+self.direction)
 
-    def advance(self):
+    def advance_position(self):
         """Update current position, and the previous/next _xy dictionaries"""
         if self.does_pos_exist(self.place_cur+self.direction):
             self.place_prev = self.place_cur
@@ -47,10 +47,7 @@ class Racer:
 
     def refresh(self):
         """Loop print_racer() for the row: bounce racer character on edges of terminal"""
-        self.print_racer()
-        if self.is_at_wall():
-            self.direction *= -1
-        self.advance()
+            self.advance_position()
         return self.get_term_input()
 
     def does_pos_exist(self, position):
