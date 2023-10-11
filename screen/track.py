@@ -46,7 +46,7 @@ class Track:
                 positions[position] = {"x": position, "y": row_track }
         elif self.shape == "pipe":
             start = PIPE_TRACK_START_ROW
-            end = term.height
+            end = term.height-1
             col = term.width // 2
             for position in range(start, end, 1):
                 positions[position] = {"x": col, "y": position}
