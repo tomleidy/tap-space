@@ -8,6 +8,7 @@ from screen.locations import message_row, term
 class Message:
     def __init__(self):
         self.last_updated = time.time()
+        self.message = ""
 
     def send_endgame(self, message):
         """Print last message of game before quitting"""
@@ -16,13 +17,15 @@ class Message:
 
     def send(self, message):
         """Print message to message row"""
+        self.message = message
         self.last_updated = time.time()
         print(term.move_y(message_row) + regular + term.center(message) + reverse)
 
     def refresh(self):
-        if time.time() - self.last_updated >= 1.0:
+        """Refresh the message banner in case time has expired"""
+        if self.message != "" and time.time() - self.last_updated >= 1.0:
             self.clear()
 
     def clear(self):
         """Clear message from message row"""
-        print(term.move_y(message_row) + term.normal + term.center("") + reverse)
+        self.message = ""
