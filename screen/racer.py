@@ -8,7 +8,7 @@ from screen.messages import Message
 class Racer:
     def __init__(self, track_positions, shape="pipe"):
         self.input_key = ""
-        self.place_cur = 0
+        self.place_cur = min(track_positions.keys())
         self.place_prev = 0
         self.shape = shape
         self.prev_xy = {}
