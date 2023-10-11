@@ -7,9 +7,11 @@ from constants.terminal_colors import reverse
 term = Terminal()
 MAX_LEVEL_SCORE = 70000
 
+
 class TitleBar:
     """Class for titlebar display. Primary external method is refresh() to have it 
     calculate/update to current values."""
+
     def __init__(self, start_time, retries):
         self.start_time = start_time
         self.goals = 0
@@ -17,17 +19,17 @@ class TitleBar:
         self.retries = retries
         self.potential_score = MAX_LEVEL_SCORE
         self.level_name = "level_name_placeholder"
-        print(term.move_xy(0,0) + reverse + term.center("tap space"))
-        #print(term.move_xy(0,0) + )
+        print(term.move_xy(0, 0) + reverse + term.center("tap space"))
+        # print(term.move_xy(0,0) + )
 
-    def pad_to_two_digits(self,num):
+    def pad_to_two_digits(self, num):
         """Pad numbers. Max 99. Negative numbers converted to absolute value"""
         if not isinstance(num, (int, float)):
-            return "tt" # type test error
+            return "tt"  # type test error
         if num > 99:
             return "99"
         if num < 0:
-            return "nn" # negative number, why?
+            return "nn"  # negative number, why?
         return f"{num:02}"
 
     def print_gametime(self):
@@ -56,7 +58,7 @@ class TitleBar:
     def add_goal(self):
         """Update class with game score"""
         self.goals += 1
-        
+
     def add_miss(self):
         """Update class with misses count"""
         self.misses += 1
