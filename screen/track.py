@@ -17,7 +17,7 @@ PIPE_GOAL_MID_RIGHT = f"{regular}<{term.normal}"
 PIPE_TRACK_STRING = f"{reverse} {term.normal}"
 
 class Track:
-    def __init__(self, shape="pipe"):
+    def __init__(self, shape):
         self.shape = shape
         self.track_positions = {}
         self.virtual_track()
@@ -34,7 +34,7 @@ class Track:
 
     def screen_clear(self):
         """Clear the screen in preparation for track"""
-        print(term.home + term.normal + term.clear)
+        print(term.home + term.normal + term.clear + term.hide_cursor())
 
     def virtual_track(self):
         """Create object with x,y coordinates for each place on the track, and update state"""
