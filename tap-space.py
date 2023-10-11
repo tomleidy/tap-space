@@ -3,13 +3,24 @@ import time
 import os
 import platform
 import sys
+import argparse
 from constants.terminal_strings import WIN_MESSAGE, LOSE_MESSAGE
-from constants.game import STARTING_LIVES
+from constants.game import STARTING_LIVES, LEVELS
 from screen.track import Track
 from screen.messages import Message
 from screen.racer import Racer
 from screen.locations import term
 from screen.titlebar import TitleBar
+
+level_names = []
+for level in LEVELS:
+    level_names.append(level["name"].lower())
+parser = argparse.ArgumentParser(prog="tap-space",
+                                 description="a terminal tap game",
+                                 epilog="the name tells you how to interact")
+parser.add_argument("-s", "--shape", default="hyphen", choices=level_names)
+
+args = parser.parse_args()
 
 # eventually will update all with screen.update() instead of track, message, racer updates
 
@@ -23,17 +34,16 @@ if platform.system() == 'Windows' and os.getenv('MSYSTEM') == 'MINGW64':
 
 class Game:
     """Primary class for running game instances"""
-    def __init__(self, starting_lives=STARTING_LIVES):
-        shape = "hyphen"
+        self.shape = shape
         self.lives = starting_lives
         self.goals = 0
         self.misses = 0
         self.difficulty = 0 # constant speed, (30ms input timeout?)
         self.racer_feedback = ""
-        self.track = Track(shape)
+        self.track = Track(self.shape)
         self.message = Message()
         self.track_positions = self.track.get_track()
-        self.racer = Racer(self.track_positions, shape)
+        self.racer = Racer(self.track_positions, self.shape)
         self.titlebar = TitleBar(time.time(), self.lives)
 
     def run_game(self):
@@ -54,7 +64,7 @@ class Game:
         self.message.send(WIN_MESSAGE)
 
 
-game = Game(9)
+game = Game(9, args.shape)
 game.run_game()
 
 # do we need to reset the terminal to normal? we do.
