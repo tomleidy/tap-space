@@ -46,7 +46,8 @@ class Game:
         self.track = Track(self.shape)
         self.message = Message()
         self.track_positions = self.track.get_track()
-        self.racer = Racer(self.track_positions, self.shape)
+        self.racer = Racer(self.track_positions,
+                           self.track.get_goal(), self.shape)
         self.titlebar = TitleBar(time.time(), self.lives)
 
     def run_game(self):

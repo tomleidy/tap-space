@@ -1,8 +1,7 @@
 from constants.terminal_colors import regular, reverse
 from constants.terminal_strings import TRACK_CHARACTER, RACER_CHARACTER
 from constants.game import INPUT_TIMEOUT
-from screen.locations import column_goal, term  # , row_track
-
+from screen.locations import term
 from screen.messages import Message
 
 DEBUG = True
@@ -11,11 +10,12 @@ DEBUG = True
 class Racer:
     """Display the racer character"""
 
-    def __init__(self, track_positions, shape="pipe"):
+    def __init__(self, track_positions, goal_xy, shape):
         self.input_key = ""
-        self.place_cur = min(track_positions.keys())
-        self.place_prev = 0
+        self.current_position = min(track_positions.keys())
+        self.previous_position = 0
         self.shape = shape
+        self.goal_xy = goal_xy
         self.prev_xy = {}
         self.cur_xy = {}
         self.next_xy = {}
@@ -24,70 +24,87 @@ class Racer:
 
         self.track_positions = track_positions
 
-    def get_term_input(self):
-        """Use terminal methods to get user input"""
+    def refresh(self):
+        """Loop print_racer() for the row: bounce racer character on edges of terminal"""
+        self.print_racer()
+        self.advance_position()
+        if self.is_at_wall():
+            self.direction *= -1
+        return self.get_input()
+
+    def get_input(self):
+        """Use terminal methods to get user input. The limitations of the inkey timeout in Windows is what sets our speed."""
         with term.cbreak(), term.hidden_cursor():
             self.input_key = term.inkey(INPUT_TIMEOUT).lower()
             if self.input_key == "q":
                 return "q"
             elif self.input_key == " ":
-                if self.place_cur == column_goal:
+                if self.get_current_xy() == self.goal_xy:
                     return "goal"
                 else:
                     return "miss"
             return ""
 
+    def get_current_xy(self):
+        position = self.current_position
+        return (self.track_positions[position]["x"], self.track_positions[position]["y"])
+
     def is_at_wall(self):
         """Determine if position is against the end of the track"""
-        return not self.does_pos_exist(self.place_cur+self.direction)
+        min_place = min(self.track_positions.keys())
+        max_place = max(self.track_positions.keys())
+        return self.current_position == min_place or self.current_position == max_place
 
     def advance_position(self):
         """Update current position, and the previous/next _xy dictionaries"""
-        if self.does_pos_exist(self.place_cur+self.direction):
-            self.place_prev = self.place_cur
-            self.place_cur += self.direction
+        self.previous_position = self.current_position
+        next_position = self.current_position+self.direction
+        if self.does_position_exist(next_position):
+            self.current_position += self.direction
 
-    def refresh(self):
-        """Loop print_racer() for the row: bounce racer character on edges of terminal"""
-            self.advance_position()
-        return self.get_term_input()
-
-    def does_pos_exist(self, position):
+    def does_position_exist(self, position):
         """Determine if position is available in track_positions dictionary"""
-        if position not in self.track_positions:
-            return False
-        return True
+        return position in self.track_positions
 
-    def get_pos_dict(self, position):
-        """Return xy coordinate object for a position"""
-        # if DEBUG == True:
-        #     print(term.move_xy(1, 3) + "position:",
-        #           position, self.track_positions)
-        #    sys.exit()
-        if self.does_pos_exist(position):
-            #print("position:", position, self.track_positions)
-            return self.track_positions[position]
-        return {"x": -1, "y": -1}
+    def get_position_xy(self, position):
+        """Return xy coordinate object for a position. This is clunky. I'll figure out how to refine it eventually."""
+        if self.does_position_exist(position):
+            x_pos = self.track_positions[position]["x"]
+            y_pos = self.track_positions[position]["y"]
+            return (x_pos, y_pos)
+        return (-1, -1)
 
-    def print_to_pos(self, position, content):
+    def print_to_position(self, position, content):
         """Print content to x,y coordinates according to position from track_positions"""
-        xy_pos = self.get_pos_dict(position)
-        x_pos = xy_pos["x"]
-        y_pos = xy_pos["y"]
+        xy_pos = self.get_position_xy(position)
+        x_pos = xy_pos[0]
+        y_pos = xy_pos[1]
         if x_pos == -1 or y_pos == -1:
             return None
-        print(term.move_xy(x_pos, y_pos) + content)
+        with term.hidden_cursor():
+            print(term.move_xy(x_pos, y_pos) + content)
+
+    def print_racer_pipe(self):
+        """Print the racer on the pipe track, replacing previous track"""
+        pipe_string_previous = f"{term.normal}{reverse}{TRACK_CHARACTER}{term.normal}"
+        pipe_string_racer = f"{term.normal}{regular}{RACER_CHARACTER}{term.normal}"
+        previous = self.previous_position
+        current = self.current_position
+        self.print_to_position(previous, pipe_string_previous)
+        self.print_to_position(current, pipe_string_racer)
+
+    def print_racer_hyphen(self):
+        """Print the racer to the hyphen track, replace previous track"""
+        hyphen_string_previous = f"{reverse}{TRACK_CHARACTER}{reverse}"
+        hyphen_string_racer = f"{reverse}{regular}{RACER_CHARACTER}{reverse}"
+        previous = self.previous_position
+        current = self.current_position
+        self.print_to_position(previous, hyphen_string_previous)
+        self.print_to_position(current, hyphen_string_racer)
 
     def print_racer(self):
-        """Display the racer character on the track"""
-        
+        """Call the appropriate print_racer_TRACK"""
         if self.shape == "pipe":
-            self.print_to_pos(self.place_prev, f"{term.normal}{reverse}{TRACK_CHARACTER}{term.normal}")
-            self.print_to_pos(self.place_cur, f"{term.normal}{regular}{RACER_CHARACTER}{term.normal}")
+            self.print_racer_pipe()
         elif self.shape == "hyphen":
-            self.print_to_pos(self.place_prev, f"{reverse}{TRACK_CHARACTER}{reverse}")
-            self.print_to_pos(self.place_cur, f"{reverse}{regular}{RACER_CHARACTER}{reverse}")
-            
-        #print(term.move_xy(position - 1, row_track) + TRACK_CHARACTER)
-        #print(term.move_xy(position, row_track) + regular + RACER_CHARACTER + reverse)
-        
+            self.print_racer_hyphen()

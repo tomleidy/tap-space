@@ -12,14 +12,17 @@ class Message:
 
     def send_endgame(self, message):
         """Print last message of game before quitting"""
-        print(term.move_y(message_row) + term.normal + term.center(message))
+        with term.hidden_cursor():
+            print(term.move_y(message_row) + term.normal + term.center(message))
         sys.exit()
 
     def send(self, message):
         """Print message to message row"""
         self.message = message
         self.last_updated = time.time()
-        print(term.move_y(message_row) + regular + term.center(message) + reverse)
+        with term.hidden_cursor():
+            print(term.move_y(message_row) + regular +
+                  term.center(message) + reverse)
 
     def refresh(self):
         """Refresh the message banner in case time has expired"""
@@ -29,3 +32,6 @@ class Message:
     def clear(self):
         """Clear message from message row"""
         self.message = ""
+        with term.hidden_cursor():
+            print(term.move_y(message_row) +
+                  term.normal + term.center("") + reverse)
