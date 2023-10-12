@@ -21,46 +21,7 @@ class Racer:
         self.next_xy = {}
         self.direction = 1
         self.message = Message()
-        self.track_positions = track_positions
-        self.min_x = -1
-        self.max_x = -1
-        self.min_y = -1
-        self.max_y = -1
 
-    def get_track_ends(self):
-        min_x = -1
-        max_x = -1
-        min_y = -1
-        max_y = -1
-        for position in self.track_positions.values():
-            if min_x == -1 or position["x"] < min_x:
-                min_x = position["x"]
-            if position["x"] > max_x:
-                max_x = position["x"]
-            if min_y == -1 or position["y"] < min_y:
-                min_y = position["y"]
-            if position["y"] > max_y:
-                max_y = position["y"]
-        return {"min": (min_x, min_y), "max": (max_x, max_y)}
-
-    def print_location(self, x, y):
-        if DEBUG == True:
-            if self.min_x == -1 or x < self.min_x:
-                self.min_x = x
-            if x > self.max_x:
-                self.max_x = x
-            if self.min_y == -1 or x < self.min_y:
-                self.min_y = y
-            if y > self.max_y:
-                self.max_y = y
-            with term.hidden_cursor():
-                print(term.move_xy(1, 2) + f"({x},{y})")
-                print(term.move_xy(1, 3) + f"({self.min_x},{self.min_y})")
-                print(term.move_xy(1, 4) + f"({self.max_x},{self.max_y})")
-                print(term.move_xy(1, 5) + f"{self.get_track_ends()}")
-
-    def set_track_positions(self, track_positions):
-        """A setter, just in case the track changes"""
         self.track_positions = track_positions
 
     def get_term_input(self):
