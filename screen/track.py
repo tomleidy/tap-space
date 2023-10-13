@@ -30,13 +30,42 @@ class Track:
         """Return self.track_positions, allow other classes to know the track positions"""
         return self.track_positions
 
-    def get_goal(self):
+    def get_goal_center(self):
         """Calculate and return coordinates of goal position"""
         # add code to modify the y coordinate if difficulty is impossible
         if self.shape == "hyphen":
             return (term.width // 2, term.height // 2)
         elif self.shape == "pipe":
             return (term.width // 2, (term.height - 2) // 2)
+
+    def get_goal_tuple(self):
+        """Get ful list of positions for goal, including non-center, for clearing track."""
+        positions = []
+        if self.shape == "hyphen":
+            # row above: x-1, x, x+1
+            # row below: x-1, x, x+1
+            pos_x = term.width // 2
+            pos_y = term.height // 2
+            positions.append((pos_x, pos_y))
+            positions.append((pos_x, pos_y-1))
+            positions.append((pos_x-1, pos_y-1))
+            positions.append((pos_x+1, pos_y-1))
+            positions.append((pos_x, pos_y+1))
+            positions.append((pos_x-1, pos_y+1))
+            positions.append((pos_x+1, pos_y+1))
+        elif self.shape == "pipe":
+            # column left: y-1, y, y+1
+            # column right: y-1, y, y+1
+            pos_x = term.width // 2
+            pos_y = (term.height - 2) // 2
+            positions.append((pos_x, pos_y))
+            positions.append((pos_x-1, pos_y))
+            positions.append((pos_x-1, pos_y-1))
+            positions.append((pos_x-1, pos_y+1))
+            positions.append((pos_x+1, pos_y))
+            positions.append((pos_x+1, pos_y-1))
+            positions.append((pos_x+1, pos_y+1))
+        return tuple(positions)
 
     def get_track_start(self):
         """Calculate and return beginning of track"""
@@ -60,7 +89,7 @@ class Track:
     def virtual_track(self):
         """Create object with x,y coordinates for each place on the track, and update state"""
         positions = {}
-        goal_xy = self.get_goal()
+        goal_xy = self.get_goal_center()
         if self.shape == "hyphen":
             start = 0
             end = term.width
@@ -79,7 +108,7 @@ class Track:
     def print_track_pipe(self):
         """Print vertical track in middle of terminal"""
         track_x = self.get_track_start()[0]
-        goal_y = self.get_goal()[1]
+        goal_y = self.get_goal_center()[1]
         print(
             term.move_xy(track_x-1, goal_y - 1) + PIPE_GOAL_UPPER_LOWER
         )
@@ -89,9 +118,25 @@ class Track:
         for row in range(self.get_track_start()[1], self.get_track_end()[1], 1):
             print(term.move_xy(track_x, row) + reverse + ' ' + term.normal)
 
+    def get_track_tuple(self):
+        """A set of track positions. Goal: switch track_positions from dict to set"""
+        positions = []
+        for position in self.track_positions.values():
+            positions.append((position["x"], position["y"]))
+        return tuple(positions)
+
+    def wipe_track_normal(self):
+        """Clear the track, returning it to normal terminal"""
+        print(term.normal)
+        # I like the set approach more than the dict.
+        for position in self.get_goal_tuple():
+            print(term.move_xy(position[0], position[1]) + term.normal + " ")
+        for position in self.get_track_tuple():
+            print(term.move_xy(position[0], position[1]) + term.normal + " ")
+
     def print_goals(self):
         """Print goal posts"""
-        goal_xy = self.get_goal()
+        goal_xy = self.get_goal_center()
         if self.shape == "hyphen":
 
             print(regular)
@@ -100,7 +145,7 @@ class Track:
 
     def print_track_hyphen(self):
         """Print track in terminal"""
-        goal_xy = self.get_goal()
+        goal_xy = self.get_goal_center()
         if self.shape == "hyphen":
             # print(reverse + term.move_xy(0,row_track) + TRACK_CHARACTER)
             print(reverse + term.move_xy(0, goal_xy[1]) +

@@ -47,7 +47,7 @@ class Game:
         self.message = Message()
         self.track_positions = self.track.get_track()
         self.racer = Racer(self.track_positions,
-                           self.track.get_goal(), self.shape)
+                           self.track.get_goal_center(), self.shape)
         self.titlebar = TitleBar(time.time(), self.lives)
 
     def run_game(self):
@@ -62,6 +62,7 @@ class Game:
             elif self.racer_feedback == "miss":
                 self.titlebar.add_miss()
                 self.message.send(LOSE_MESSAGE)
+        self.track.wipe_track_normal()
 
     def space_miss(self):
         """Player hit spacebar, it was a miss"""
