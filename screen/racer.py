@@ -42,6 +42,9 @@ class Racer:
                 return "miss"
             return ""
 
+    def are_neighbor(self):
+        x1, y1 = self.track_positions[0]
+        x2, y2 = self.track_positions[-1]
         return abs(x1-x2) <= 1 and abs(y1-y2) <= 1
 
     def is_at_wall(self):
