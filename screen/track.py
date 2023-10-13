@@ -130,9 +130,10 @@ class Track:
         print(term.normal)
         # I like the set approach more than the dict.
         for position in self.get_goal_tuple():
-            print(term.move_xy(position[0], position[1]) + term.normal + " ")
+            print(term.move_xy(*position) + term.normal + " ")
         for position in self.get_track_tuple():
-            print(term.move_xy(position[0], position[1]) + term.normal + " ")
+            print(term.move_xy(*position) + term.normal + " ")
+        print(term.move_xy(0, term.height-3))
 
     def print_goals(self):
         """Print goal posts"""
