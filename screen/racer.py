@@ -42,8 +42,7 @@ class Racer:
                 return "miss"
             return ""
 
-    def get_current_xy(self):
-        return (self.track_positions[self.current_position])
+        return abs(x1-x2) <= 1 and abs(y1-y2) <= 1
 
     def is_at_wall(self):
         """Determine if position is against the end of the track"""
