@@ -1,3 +1,4 @@
+import random
 from constants.terminal_colors import regular, reverse
 from constants.terminal_strings import TRACK_CHARACTER, RACER_CHARACTER
 from constants.game import INPUT_TIMEOUT
