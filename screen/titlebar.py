@@ -39,7 +39,7 @@ class TitleBar:
         seconds = self.pad_to_two_digits(duration % 60)
         duration_string = f"{minutes}:{seconds}"
         position_duration_x = term.width - (len(duration_string) + 1)
-        print(term.move_xy(position_duration_x, 0) + duration_string)
+        print(term.move_xy(position_duration_x, 0) + reverse + duration_string)
 
     def refresh(self):
         """Run methods in class to update titlebar with every iteration"""
@@ -53,7 +53,7 @@ class TitleBar:
         "Display current game score in title bar"
         goals = f"Goals: {self.pad_to_two_digits(self.goals)}"
         misses = f"Misses: {self.pad_to_two_digits(self.misses)}"
-        print(f"{term.move_xy(1,0)}{goals} {misses}")
+        print(f"{term.move_xy(1,0)}{reverse} {goals} {misses}")
 
     def add_goal(self):
         """Update class with game score"""
