@@ -88,21 +88,18 @@ class Track:
 
     def virtual_track(self):
         """Create object with x,y coordinates for each place on the track, and update state"""
-        positions = {}
+        positions = []
         goal_xy = self.get_goal_center()
         if self.shape == "hyphen":
             start = 0
             end = term.width
             for position in range(start, end, 1):
-                positions[position] = {"x": position, "y": goal_xy[1]}
+                positions.append((position, goal_xy[1]))
         elif self.shape == "pipe":
-            start = self.get_track_start()
-            start_x = start[0]
-            start_y = start[1]
+            start_x, start_y = self.get_track_start()
             end_y = self.get_track_end()[1]
             for position in range(start_y, end_y, 1):
-                positions[position] = {"x": start_x, "y": position}
-        # print(positions)
+                positions.append((start_x, position))
         self.track_positions = positions
 
     def print_track_pipe(self):
@@ -118,12 +115,12 @@ class Track:
         for row in range(self.get_track_start()[1], self.get_track_end()[1], 1):
             print(term.move_xy(track_x, row) + reverse + ' ' + term.normal)
 
-    def get_track_tuple(self):
-        """A set of track positions. Goal: switch track_positions from dict to set"""
-        positions = []
-        for position in self.track_positions.values():
-            positions.append((position["x"], position["y"]))
-        return tuple(positions)
+    # def get_track_tuple(self):
+    #     """A set of track positions. Goal: switch track_positions from dict to set"""
+    #     positions = []
+    #     for position in self.track_positions.values():
+    #         positions.append((position["x"], position["y"]))
+    #     return tuple(positions)
 
     def wipe_track_normal(self):
         """Clear the track, returning it to normal terminal"""
@@ -131,7 +128,7 @@ class Track:
         # I like the set approach more than the dict.
         for position in self.get_goal_tuple():
             print(term.move_xy(*position) + term.normal + " ")
-        for position in self.get_track_tuple():
+        for position in self.track_positions:
             print(term.move_xy(*position) + term.normal + " ")
         print(term.move_xy(0, term.height-3))
 
