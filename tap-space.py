@@ -33,6 +33,16 @@ if platform.system() == 'Windows' and os.getenv('MSYSTEM') == 'MINGW64':
     # They don't handle the ANSI as intended.
 
 
+def shape_menu():
+    print("1. Hyphen")
+    print("2. Pipe")
+
+
+def difficulty_menu():
+    print("1. Normal")
+    print("5. Impossible")
+
+
 class Game:
     """Primary class for running game instances"""
 
