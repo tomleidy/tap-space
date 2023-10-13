@@ -1,10 +1,8 @@
 from constants.terminal_colors import regular, reverse
 from constants.terminal_strings import TRACK_CHARACTER, RACER_CHARACTER
 from constants.game import INPUT_TIMEOUT
-from screen.locations import term
+from screen.track import term
 from screen.messages import Message
-
-DEBUG = True
 
 
 class Racer:
@@ -16,9 +14,6 @@ class Racer:
         self.previous_position = 0
         self.shape = shape
         self.goal_xy = goal_xy
-        self.prev_xy = {}
-        self.cur_xy = {}
-        self.next_xy = {}
         self.direction = 1
         self.message = Message()
 
@@ -33,16 +28,16 @@ class Racer:
         return self.get_input()
 
     def get_input(self):
-        """Use terminal methods to get user input. The limitations of the inkey timeout in Windows is what sets our speed."""
+        """Use terminal methods to get user input."""
+        # The limitations of the inkey timeout in Windows is what sets our speed.
         with term.cbreak(), term.hidden_cursor():
             self.input_key = term.inkey(INPUT_TIMEOUT).lower()
             if self.input_key == "q":
                 return "q"
-            elif self.input_key == " ":
+            if self.input_key == " ":
                 if self.get_current_xy() == self.goal_xy:
                     return "goal"
-                else:
-                    return "miss"
+                return "miss"
             return ""
 
     def get_current_xy(self):
@@ -53,7 +48,10 @@ class Racer:
         """Determine if position is against the end of the track"""
         min_place = min(self.track_positions.keys())
         max_place = max(self.track_positions.keys())
-        return self.current_position == min_place or self.current_position == max_place
+        at_wall = self.current_position in (min_place, max_place)
+        # if at_wall == True:
+        #     print(term.move_xy(3, 3) + str(self.get_current_xy()))
+        return at_wall
 
     def advance_position(self):
         """Update current position, and the previous/next _xy dictionaries"""
@@ -67,7 +65,8 @@ class Racer:
         return position in self.track_positions
 
     def get_position_xy(self, position):
-        """Return xy coordinate object for a position. This is clunky. I'll figure out how to refine it eventually."""
+        """Return xy coordinate object for a position."""
+        # This is clunky. I'll figure out how to refine it eventually.
         if self.does_position_exist(position):
             x_pos = self.track_positions[position]["x"]
             y_pos = self.track_positions[position]["y"]
