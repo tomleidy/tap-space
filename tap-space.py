@@ -5,12 +5,14 @@ import platform
 import sys
 import argparse
 from constants.terminal_strings import WIN_MESSAGE, LOSE_MESSAGE
-from constants.game import STARTING_LIVES, LEVELS
+from constants.game import LEVELS
 from screen.track import Track
 from screen.messages import Message
 from screen.racer import Racer
 from screen.locations import term
 from screen.titlebar import TitleBar
+
+GAME_OVER_MESSAGE = "You were luckier than a cat. Sorry to say, you've run out of lives."
 
 level_names = []
 for level in LEVELS:
@@ -70,8 +72,12 @@ class Game:
                 self.titlebar.add_goal()
                 self.message.send(WIN_MESSAGE)
             elif self.racer_feedback == "miss":
-                self.titlebar.add_miss()
+                lives = self.titlebar.add_miss()
                 self.message.send(LOSE_MESSAGE)
+                if lives == 0:
+                    self.message.send(GAME_OVER_MESSAGE)
+                    self.racer_feedback = "q"
+
         self.track.wipe_track_normal()
 
     def space_miss(self):
@@ -79,7 +85,7 @@ class Game:
         self.message.send(WIN_MESSAGE)
 
 
-game = Game(9, args.shape)
+game = Game(99, args.shape)
 game.run_game()
 
 # do we need to reset the terminal to normal? we do.
