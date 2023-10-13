@@ -37,7 +37,7 @@ class Racer:
             if self.input_key == "q":
                 return "q"
             if self.input_key == " ":
-                if self.get_current_xy() == self.goal_xy:
+                if self.track_positions[self.current_position] == self.goal_xy:
                     return "goal"
                 return "miss"
             return ""
@@ -49,33 +49,26 @@ class Racer:
 
     def is_at_wall(self):
         """Determine if position is against the end of the track"""
-        min_place = 0
         max_place = len(self.track_positions)-1
-        at_wall = self.current_position in (min_place, max_place)
+        at_wall = self.current_position in (0, max_place)
         return at_wall
 
     def advance_position(self):
         """Update current position, and the previous/next _xy dictionaries"""
         self.previous_position = self.current_position
         next_position = self.current_position+self.direction
-        if self.does_position_exist(next_position):
-            self.current_position += self.direction
+        if 0 <= next_position < len(self.track_positions):
             if self.difficulty == 5:
                 rand = random.randint(0, len(self.track_positions)//5)
                 self.current_position += rand
                 current = self.current_position % len(self.track_positions)
                 self.current_position = current
             else:
-            self.current_position += self.direction
-
-    def does_position_exist(self, position):
-        """Determine if position is available in track_positions dictionary"""
-        return position >= 0 and position < len(self.track_positions)
+                self.current_position += self.direction
 
     def get_position_xy(self, position):
         """Return xy coordinate object for a position."""
-        # This is clunky. I'll figure out how to refine it eventually.
-        if self.does_position_exist(position):
+        if 0 <= position < len(self.track_positions):
             return self.track_positions[position]
         return (5, 5)
 
