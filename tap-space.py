@@ -36,18 +36,18 @@ if platform.system() == 'Windows' and os.getenv('MSYSTEM') == 'MINGW64':
 class Game:
     """Primary class for running game instances"""
 
-    def __init__(self, starting_lives=STARTING_LIVES, shape="hyphen"):
+    def __init__(self, starting_lives, shape="hyphen", difficulty=5):
         self.shape = shape
         self.lives = starting_lives
         self.goals = 0
         self.misses = 0
-        self.difficulty = 0  # constant speed, (30ms input timeout?)
+        self.difficulty = difficulty  # constant speed, (30ms input timeout?)
         self.racer_feedback = ""
-        self.track = Track(self.shape)
+        self.track = Track(self.shape, self.difficulty)
         self.message = Message()
         self.track_positions = self.track.get_track()
         self.racer = Racer(self.track_positions,
-                           self.track.get_goal_center(), self.shape)
+                           self.track.get_goal_center(), self.shape, self.difficulty)
         self.titlebar = TitleBar(time.time(), self.lives)
 
     def run_game(self):

@@ -8,7 +8,7 @@ from screen.messages import Message
 class Racer:
     """Display the racer character"""
 
-    def __init__(self, track_positions, goal_xy, shape):
+    def __init__(self, track_positions, goal_xy, shape, difficulty):
         self.input_key = ""
         self.current_position = 0
         self.previous_position = 0
@@ -16,6 +16,7 @@ class Racer:
         self.goal_xy = goal_xy
         self.direction = 1
         self.message = Message()
+        self.difficulty = difficulty
 
         self.track_positions = track_positions
 
@@ -55,6 +56,13 @@ class Racer:
         self.previous_position = self.current_position
         next_position = self.current_position+self.direction
         if self.does_position_exist(next_position):
+            self.current_position += self.direction
+            if self.difficulty == 5:
+                rand = random.randint(0, len(self.track_positions)//5)
+                self.current_position += rand
+                current = self.current_position % len(self.track_positions)
+                self.current_position = current
+            else:
             self.current_position += self.direction
 
     def does_position_exist(self, position):
