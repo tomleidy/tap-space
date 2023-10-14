@@ -21,6 +21,8 @@ parser = argparse.ArgumentParser(prog="tap-space",
                                  description="a terminal tap game",
                                  epilog="the name tells you how to interact")
 parser.add_argument("-s", "--shape", default="hyphen", choices=level_names)
+parser.add_argument("-d", "--difficulty", type=int,
+                    default=1, choices=[1, 2, 3, 4, 5])
 
 args = parser.parse_args()
 
@@ -48,12 +50,12 @@ def difficulty_menu():
 class Game:
     """Primary class for running game instances"""
 
-    def __init__(self, starting_lives, shape="hyphen", difficulty=5):
+    def __init__(self, starting_lives, shape="hyphen", difficulty=1):
         self.shape = shape
         self.lives = starting_lives
+        self.difficulty = difficulty  # constant speed, (30ms input timeout?)
         self.goals = 0
         self.misses = 0
-        self.difficulty = difficulty  # constant speed, (30ms input timeout?)
         self.racer_feedback = ""
         self.track = Track(self.shape, self.difficulty)
         self.message = Message()
@@ -85,7 +87,7 @@ class Game:
         self.message.send(WIN_MESSAGE)
 
 
-game = Game(99, args.shape)
+game = Game(99, args.shape, args.difficulty)
 game.run_game()
 
 # do we need to reset the terminal to normal? we do.
