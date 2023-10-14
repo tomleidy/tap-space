@@ -102,7 +102,7 @@ class Track:
         """Create object with x,y coordinates for each place on the track, and update state"""
         positions = []
         start_x, start_y = self.get_track_start()
-        end_x, end_y = self.get_track_end()
+        end_y = self.get_track_end()[1]
         if self.shape == "hyphen":
             start = 0
             end = term.width
@@ -125,7 +125,7 @@ class Track:
     def print_track_pipe(self):
         """Print vertical track in middle of terminal"""
         start_x, start_y = self.get_track_start()
-        end_x, end_y = self.get_track_end()
+        end_y = self.get_track_end()[1]
         for row in range(start_y, end_y, 1):
             print(term.move_xy(start_x, row) + f"{reverse} {term.normal}")
 
@@ -149,7 +149,7 @@ class Track:
 
     def print_track_hyphen(self):
         """Print track in terminal"""
-        track_x, track_y = self.get_track_start()
+        track_y = self.get_track_start()[1]
         if self.shape == "hyphen":
             # print(reverse + term.move_xy(0,row_track) + TRACK_CHARACTER)
             print(reverse + term.move_xy(0, track_y) +
