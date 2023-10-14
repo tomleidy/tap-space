@@ -58,11 +58,16 @@ class Racer:
         self.previous_position = self.current_position
         next_position = self.current_position+self.direction
         if 0 <= next_position < len(self.track_positions):
-            if self.difficulty == 5:
-                rand = random.randint(0, len(self.track_positions)//5)
-                self.current_position += rand
-                current = self.current_position % len(self.track_positions)
-                self.current_position = current
+            if self.difficulty == 4:
+                rand = random.randint(0, len(self.track_positions)//11)
+                current = self.current_position + rand
+                self.current_position = current % len(self.track_positions)
+                # if current < 0:
+                #     self.current_position = 0
+                # elif current >= len(self.track_positions):
+                #     self.current_position = len(self.track_positions) - 1
+                # else:
+                #     self.current_position = current
             else:
                 self.current_position += self.direction
 
