@@ -15,6 +15,7 @@ PIPE_GOAL_MIDDLE = f"{regular}>{reverse}{TRACK_CHARACTER}{regular}<{term.normal}
 
 class Track:
     """Prepare screen and print track for racer to run on"""
+    # TODO: refactor shapes into their own Shape / shape_name subclasses
 
     def __init__(self, shape, difficulty):
         self.shape = shape
@@ -28,12 +29,12 @@ class Track:
     def _print_shape(self):
         if self.shape == "pipe":
             self.print_goal_pipe()
-            self.print_track_pipe()
         elif self.shape == "hyphen":
             self.print_goals_hyphen()
-            self.print_track_hyphen()
         elif self.shape == "backslash":
-            self._print_track_positions()
+            # TODO: print goals for backslash
+            pass
+        self._print_track_positions()
 
     def get_track(self):
         """Return self.track_positions, allow other classes to know the track positions"""
@@ -198,13 +199,6 @@ class Track:
         for xy in self.track_positions:
             print(term.move_xy(*xy) + f"{reverse} {term.normal}")
 
-    def print_track_pipe(self):
-        """Print vertical track in middle of terminal"""
-        start_x, start_y = self.get_track_start()
-        end_y = self.get_track_end()[1]
-        for row in range(start_y, end_y, 1):
-            print(term.move_xy(start_x, row) + f"{reverse} {term.normal}")
-
     def wipe_track_normal(self):
         """Clear the track, returning it to normal terminal"""
         print(term.normal)
@@ -223,9 +217,5 @@ class Track:
         print(reverse)
         print(term.move_xy(goal_x-1, goal_y) + "   ")
 
-    def print_track_hyphen(self):
-        """Print track in terminal"""
-        track_y = self.get_track_start()[1]
-        print(reverse + term.move_xy(0, track_y) + term.center(TRACK_CHARACTER))
     # TODO: create is_goal method, remove that test from racer.
     # TODO: two shapes on the screen at once
