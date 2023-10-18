@@ -62,12 +62,6 @@ class Racer:
                 rand = random.randint(0, len(self.track_positions)//11)
                 current = self.current_position + rand
                 self.current_position = current % len(self.track_positions)
-                # if current < 0:
-                #     self.current_position = 0
-                # elif current >= len(self.track_positions):
-                #     self.current_position = len(self.track_positions) - 1
-                # else:
-                #     self.current_position = current
             else:
                 self.current_position += self.direction
 
@@ -82,7 +76,7 @@ class Racer:
         xy_pos = self.get_position_xy(position)
         print(term.move_xy(*xy_pos) + content)
 
-    def print_racer_pipe(self):
+    def print_racer_on_nonhorizontal_track(self):
         """Print the racer on the pipe track, replacing previous track"""
         pipe_string_previous = f"{term.normal}{reverse}{TRACK_CHARACTER}{term.normal}"
         pipe_string_racer = f"{term.normal}{regular}{RACER_CHARACTER}{term.normal}"
@@ -103,6 +97,8 @@ class Racer:
     def print_racer(self):
         """Call the appropriate print_racer_TRACK"""
         if self.shape == "pipe":
-            self.print_racer_pipe()
+            self.print_racer_on_nonhorizontal_track()
+        elif self.shape == "backslash":
+            self.print_racer_on_nonhorizontal_track()
         elif self.shape == "hyphen":
             self.print_racer_hyphen()
