@@ -1,6 +1,5 @@
 """Track class contained within"""
 import random
-import math
 from blessed import Terminal
 from constants.terminal_colors import regular, reverse
 from constants.terminal_strings import TRACK_CHARACTER, GOAL_UPPER, GOAL_LOWER
@@ -21,8 +20,9 @@ class Track:
         self.shape = shape
         self.difficulty = difficulty
         self.track_positions = {}
+        self.goal_slope = 1
         self.virtual_track()
-        self._screen_clear()
+        # self._screen_clear()
         self._print_shape()
 
     def _print_shape(self):
@@ -41,7 +41,6 @@ class Track:
 
     def get_goal_center(self):
         """Calculate and return coordinates of goal position"""
-        # add code to modify the y coordinate if difficulty is impossible
         x_pos = 0
         y_pos = 0
         if self.shape == "hyphen":
@@ -54,6 +53,7 @@ class Track:
             y_pos = (term.height - 2) // 2
             if self.difficulty == 5:
                 x_pos += random.choice([3, -3])
+        # TODO: goal location for slash and backslash tracks
         return (x_pos, y_pos)
 
     def get_goal_tuple(self):
@@ -90,7 +90,7 @@ class Track:
         if self.shape == "hyphen":
             return (0, term.height // 2)
         elif self.shape == "pipe":
-            # y = 2? leave a gap below the titlebar
+            # y = 2 to leave a gap below the titlebar
             return (term.width // 2, 2)
         elif self.shape == "backslash":
             return (2, 2)
@@ -107,13 +107,15 @@ class Track:
         """Calculate and return ending of track"""
         if self.shape == "hyphen":
             return (term.width, term.height // 2)
-        elif self.shape == "pipe":
+        if self.shape == "pipe":
             return (term.width // 2, term.height-1)
-        elif self.shape == "backslash":
+        if self.shape == "backslash":
             return (term.width - 2, term.height - 2)
+        return None
 
     def _screen_clear(self):
         """Clear the screen in preparation for track"""
+        # TODO: move this to Game
         print(term.home + term.normal + term.clear)
 
     def _track_hyphen(self):
@@ -182,7 +184,6 @@ class Track:
         elif self.shape == "pipe":
             positions = self._track_pipe()
         elif self.shape == "backslash":
-
             positions = self._track_backslash()
         self.track_positions = positions
 
