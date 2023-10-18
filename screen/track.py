@@ -1,5 +1,6 @@
 """Track class contained within"""
 import random
+import math
 from blessed import Terminal
 from constants.terminal_colors import regular, reverse
 from constants.terminal_strings import TRACK_CHARACTER, GOAL_UPPER, GOAL_LOWER
@@ -21,13 +22,18 @@ class Track:
         self.difficulty = difficulty
         self.track_positions = {}
         self.virtual_track()
-        self.screen_clear()
+        self._screen_clear()
+        self._print_shape()
+
+    def _print_shape(self):
         if self.shape == "pipe":
             self.print_goal_pipe()
             self.print_track_pipe()
         elif self.shape == "hyphen":
             self.print_goals_hyphen()
             self.print_track_hyphen()
+        elif self.shape == "backslash":
+            self._print_track_positions()
 
     def get_track(self):
         """Return self.track_positions, allow other classes to know the track positions"""
@@ -86,6 +92,16 @@ class Track:
         elif self.shape == "pipe":
             # y = 2? leave a gap below the titlebar
             return (term.width // 2, 2)
+        elif self.shape == "backslash":
+            return (2, 2)
+        elif self.shape == "slash":
+            pass
+        elif self.shape == "plus":
+            pass
+        elif self.shape == "multiplication":
+            pass
+        elif self.shape == "asterisk":
+            pass
 
     def get_track_end(self):
         """Calculate and return ending of track"""
@@ -93,26 +109,81 @@ class Track:
             return (term.width, term.height // 2)
         elif self.shape == "pipe":
             return (term.width // 2, term.height-1)
+        elif self.shape == "backslash":
+            return (term.width - 2, term.height - 2)
 
-    def screen_clear(self):
+    def _screen_clear(self):
         """Clear the screen in preparation for track"""
         print(term.home + term.normal + term.clear)
 
-    def virtual_track(self):
-        """Create object with x,y coordinates for each place on the track, and update state"""
+    def _track_hyphen(self):
         positions = []
         start_x, start_y = self.get_track_start()
+        end = term.width
+        for position in range(start_x, end, 1):
+            positions.append((position, start_y))
+        return positions
+
+    def _track_pipe(self):
+        start_x, start_y = self.get_track_start()
         end_y = self.get_track_end()[1]
+        start_x, start_y = self.get_track_start()
+        end_y = self.get_track_end()[1]
+        positions = []
+        for position in range(start_y, end_y, 1):
+            positions.append((start_x, position))
+        return positions
+
+    def _slope_btwn_points(self, point1, point2):
+        x1, y1 = point1
+        x2, y2 = point2
+        d_y = y2 - y1
+        d_x = x2 - x1
+        if d_x != 0:
+            slope = d_y / d_x
+            return slope
+        return None
+
+    def _slope_closer_to_goal_slope(self, point1, point2, end_point):
+        slope1 = self._slope_btwn_points(point1, end_point)
+        slope2 = self._slope_btwn_points(point2, end_point)
+        if slope1 is None:
+            return point2
+        if slope2 is None:
+            return point1
+        d_goal_slope1 = abs(slope1 - self.goal_slope)
+        d_goal_slope2 = abs(slope2 - self.goal_slope)
+        if d_goal_slope1 < d_goal_slope2:
+            return point1
+        elif d_goal_slope2 < d_goal_slope1:
+            return point2
+        return random.choice([point1, point2])
+
+    def _track_backslash(self):
+        start = self.get_track_start()
+        end = self.get_track_end()
+        # print(start, end)
+        self.goal_slope = self._slope_btwn_points(start, end)
+        # print(self.goal_slope)
+        cur = list(start)
+        positions = []
+        while cur[0] < end[0] and cur[1] < end[1]:
+            next_x = (cur[0]+1, cur[1])
+            next_y = (cur[0], cur[1]+1)
+            closest_to_goal_slope = self._slope_closer_to_goal_slope(next_x, next_y, end)
+            positions.append(closest_to_goal_slope)
+            cur = closest_to_goal_slope
+        return positions
+
+    def virtual_track(self):
+        """Create object with x,y coordinates for each place on the track, and update state"""
         if self.shape == "hyphen":
-            start = 0
-            end = term.width
-            for position in range(start, end, 1):
-                positions.append((position, start_y))
+            positions = self._track_hyphen()
         elif self.shape == "pipe":
-            start_x, start_y = self.get_track_start()
-            end_y = self.get_track_end()[1]
-            for position in range(start_y, end_y, 1):
-                positions.append((start_x, position))
+            positions = self._track_pipe()
+        elif self.shape == "backslash":
+
+            positions = self._track_backslash()
         self.track_positions = positions
 
     def print_goal_pipe(self):
@@ -121,6 +192,10 @@ class Track:
         print(term.move_xy(goal_x-1, goal_y-1) + PIPE_GOAL_UPPER_LOWER)
         print(term.move_xy(goal_x-1, goal_y) + PIPE_GOAL_MIDDLE)
         print(term.move_xy(goal_x-1, goal_y+1) + PIPE_GOAL_UPPER_LOWER)
+
+    def _print_track_positions(self):
+        for xy in self.track_positions:
+            print(term.move_xy(*xy) + f"{reverse} {term.normal}")
 
     def print_track_pipe(self):
         """Print vertical track in middle of terminal"""
@@ -150,7 +225,6 @@ class Track:
     def print_track_hyphen(self):
         """Print track in terminal"""
         track_y = self.get_track_start()[1]
-        if self.shape == "hyphen":
-            # print(reverse + term.move_xy(0,row_track) + TRACK_CHARACTER)
-            print(reverse + term.move_xy(0, track_y) +
-                  term.center(TRACK_CHARACTER))
+        print(reverse + term.move_xy(0, track_y) + term.center(TRACK_CHARACTER))
+    # TODO: create is_goal method, remove that test from racer.
+    # TODO: two shapes on the screen at once
