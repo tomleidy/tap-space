@@ -64,8 +64,13 @@ class Game:
                            self.track.get_goal_center(), self.shape, self.difficulty)
         self.titlebar = TitleBar(time.time(), self.lives)
 
+    def _screen_clear(self):
+        """Clear the screen in preparation for track"""
+        print(term.home + term.normal + term.clear)
+
     def run_game(self):
         """Runs the sentinel pattern loop"""
+        self._screen_clear()
         while self.racer_feedback != "q":
             self.titlebar.refresh()
             self.message.refresh()

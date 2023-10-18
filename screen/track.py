@@ -114,11 +114,6 @@ class Track:
             return (term.width - 2, term.height - 2)
         return None
 
-    def _screen_clear(self):
-        """Clear the screen in preparation for track"""
-        # TODO: move this to Game
-        print(term.home + term.normal + term.clear)
-
     def _track_hyphen(self):
         positions = []
         start_x, start_y = self.get_track_start()
