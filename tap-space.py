@@ -57,6 +57,7 @@ class Game:
         self.goals = 0
         self.misses = 0
         self.racer_feedback = ""
+        self._screen_clear()
         self.track = Track(self.shape, self.difficulty)
         self.message = Message()
         self.track_positions = self.track.get_track()
@@ -70,7 +71,7 @@ class Game:
 
     def run_game(self):
         """Runs the sentinel pattern loop"""
-        self._screen_clear()
+
         while self.racer_feedback != "q":
             self.titlebar.refresh()
             self.message.refresh()
